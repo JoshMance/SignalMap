@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous">
+    </script>
+</head>
+<body>
+    <script>
+        const f = () => {
+            if (navigator.connection) {
+                $("#connection-type").html(`Connection type: ${navigator.connection.effectiveType}`);
+                $("#downlink-speed").html(`Downlink speed (Mbps): ${navigator.connection.downlink}`);
+                $("#round-trip-time").html(`RTT (ms): ${navigator.connection.rtt}`);
+            } else {
+                console.log("Network Information API not supported in this browser.");
+            }
+        };
+    </script>
+
+    <div id ="connection-type">Connection type: Not Known</div>
+    <div id ="downlink-speed">Downlink speed (Mbps): Not Known</div>
+    <div id ="round-trip-time">RTT (ms): Not Known</div>
+
+    <button type="button" onclick = "f()"> Test</button>
+
+</body>
+</html>
