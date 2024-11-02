@@ -6,25 +6,62 @@
         integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
         crossorigin="anonymous">
     </script>
-</head>
-<body>
+    <link rel="stylesheet" href="./style.css"> 
+
     <script>
-        const f = () => {
+        var dialMaxAngle = 300;
+        var dialMaxValue = 300;
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        const updateDialAngle = (angle) => {
+            $(".dial-ring").css("--angle", `${angle}deg`); 
+        }
+
+        async function setDialValue(newValue, maxValue) {
+            
+            let angle = parseInt($(".dial-ring").css("--angle"));
+            var finalAngle = Math.floor((newValue/maxValue)*dialMaxAngle);
+
+            while (angle <= finalAngle) {
+                let step = Math.sign(finalAngle - angle);
+                angle += step;
+                updateDialAngle(angle);
+                
+                let value = Math.floor((angle/finalAngle)*maxValue);
+                $("#latency").html(`${value} ms`);
+
+                await delay(5); 
+            }
+
+            return true;
+        }
+        
+
+        dialButtonHandler = () => {
             if (navigator.connection) {
-                $("#connection-type").html(`Connection type: ${navigator.connection.effectiveType}`);
-                $("#downlink-speed").html(`Downlink speed (Mbps): ${navigator.connection.downlink}`);
-                $("#round-trip-time").html(`RTT (ms): ${navigator.connection.rtt}`);
+                setDialValue(navigator.connection.rtt, dialMaxValue);
+
             } else {
                 console.log("Network Information API not supported in this browser.");
             }
         };
+
+        
     </script>
+</head>
+<body>
+    <div class = "container"> 
 
-    <div id ="connection-type">Connection type: Not Known</div>
-    <div id ="downlink-speed">Downlink speed (Mbps): Not Known</div>
-    <div id ="round-trip-time">RTT (ms): Not Known</div>
-
-    <button type="button" onclick = "f()"> Test</button>
-
+        <div class="dial-ring">
+            <div class="dial-ticks">
+                <button class="dial-button" onclick = "dialButtonHandler()"> 
+                    <div id ="latency"> 0.0 ms </div>
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
