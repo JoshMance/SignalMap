@@ -9,59 +9,27 @@
     <link rel="stylesheet" href="./style.css"> 
 
     <script>
-        var dialMaxAngle = 300;
-        var dialMaxValue = 300;
-
-        function delay(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        const updateDialAngle = (angle) => {
-            $(".dial-ring").css("--angle", `${angle}deg`); 
-        }
-
-        async function setDialValue(newValue, maxValue) {
-            
-            let angle = parseInt($(".dial-ring").css("--angle"));
-            var finalAngle = Math.floor((newValue/maxValue)*dialMaxAngle);
-
-            while (angle <= finalAngle) {
-                let step = Math.sign(finalAngle - angle);
-                angle += step;
-                updateDialAngle(angle);
-                
-                let value = Math.floor((angle/finalAngle)*maxValue);
-                $("#latency").html(`${value} ms`);
-
-                await delay(5); 
-            }
-
-            return true;
-        }
-        
-
-        dialButtonHandler = () => {
-            if (navigator.connection) {
-                setDialValue(navigator.connection.rtt, dialMaxValue);
-
-            } else {
-                console.log("Network Information API not supported in this browser.");
-            }
-        };
-
+       
         
     </script>
 </head>
-<body>
-    <div class = "container"> 
+<body class = "">
+    <div class = "navbar roboto-regular"> 
+        The Wifi Doctor
+    </div>
+    <div class = "page-container roboto-regular">
 
-        <div class="dial-ring">
-            <div class="dial-ticks">
-                <button class="dial-button" onclick = "dialButtonHandler()"> 
-                    <div id ="latency"> 0.0 ms </div>
-                </button>
+        <div id = "start" class = "page roboto-regular">
+            <div>
+                Measure the connection speed of your local modem.
             </div>
-        </div>
+            <div>
+                Receive a report on how to improve your Wifi speeds.  
+            </div>
+            <div>
+                <button id = "start-button"> Test </button>
+            </div>    
+        </div> 
     </div>
 </body>
 </html>

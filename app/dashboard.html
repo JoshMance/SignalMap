@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="./dahsboard-style.css"> 
+
+    <script>
+        function measureDownloadSpeed() {
+            const url = 'http://192.168.0.54:3000/download'; // A large file URL
+            
+            const startTime = performance.now();
+            fetch(url, {mode: 'no-cors', method: 'GET', cache: 'no-cache'});
+            const endTime = performance.now();
+            
+            const duration = (endTime - startTime) / 1000; // Convert to seconds
+            const fileSizeInBits = 100000000 * 8; // Assuming 100MB file for example
+            const speed = (fileSizeInBits / duration) / 100000000; // 100 Mbps
+            
+            console.log(`Download speed: ${speed.toFixed(2)} Mbps`);
+
+            return speed;
+        }
+
+        var dialMaxAngle = 300;
+        var dialMaxValue = 50000;
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        const updateDialAngle = (angle) => {
+            $(".dial-ring").css("--angle", `${angle}deg`); 
+        }
+
+        async function setDialValue(newValue, maxValue) {
+            let angle = parseInt($(".dial-ring").css("--angle"));
+            var finalAngle = Math.floor((newValue/maxValue)*dialMaxAngle);
+
+            while (angle < finalAngle) {
+                let step = Math.sign(finalAngle - angle);
+                angle += step;
+                updateDialAngle(angle);
+                
+                let value = Math.floor((angle/finalAngle)*maxValue);
+                if (angle % 5 == 0) {
+                    $("#speed").html(`${value} Mbps`);
+                } 
+                await delay(1); 
+            }
+        }
+
+        dialButtonHandler = () => {
+            var speed = measureDownloadSpeed();
+            setDialValue(speed, dialMaxValue);
+
+        };
+
+        setInterval(async () => {await dialButtonHandler();}, 1000);
+
+        
+    </script>
+</head>
+<body>
+    <div class = "container"> 
+
+        <div class="dial-ring">
+            <div class="dial-ticks">
+                <button class="dial-button" onclick = "dialButtonHandler()"> 
+                    <div id ="speed"> 0.0 Mbps </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
